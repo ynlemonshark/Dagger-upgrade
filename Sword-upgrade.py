@@ -40,6 +40,8 @@ FPSCLOCK = pygame.time.Clock()
 
 
 def main():
+    gameStart = True
+    channel = "swordField"
     while True:
         pygame_events = pygame.event.get()
         for pygame_event in pygame_events:
@@ -48,7 +50,8 @@ def main():
                 sys.exit()
 
         SURFACE.fill((255, 0, 0))
-        SURFACE.blit(Code.Swords.field_image, Code.Swords.field_rect.topleft)
+        if channel == "swordField":
+            SURFACE.blit(Code.Swords.field_image, Code.Swords.field_rect.topleft)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
 
