@@ -2,6 +2,8 @@ import pygame
 import sys
 from pygame.locals import QUIT, Rect
 
+import Code.Swords
+
 
 def setting_import():
     settings_file = open("setting.txt", "r")
@@ -46,6 +48,7 @@ def main():
                 sys.exit()
 
         SURFACE.fill((255, 0, 0))
+        SURFACE.blit(Code.Swords.field_image, Code.Swords.field_rect.topleft)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
 
