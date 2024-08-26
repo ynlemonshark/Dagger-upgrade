@@ -49,9 +49,25 @@ def main():
                 pygame.quit()
                 sys.exit()
 
+            elif pygame_event.type == pygame.MOUSEBUTTONDOWN:
+                event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
+                Code.Swords.make_button_click_down(event_pos)
+
+            elif pygame_event.type == pygame.MOUSEBUTTONUP:
+                event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
+                Code.Swords.make_button_click_up()
+
+        # calculation
+        Code.Swords.made_calculation(FPS)
+
+
+        # draw
+
         SURFACE.fill((255, 0, 0))
         if channel == "swordField":
-            SURFACE.blit(Code.Swords.field_image, Code.Swords.field_rect.topleft)
+            Code.Swords.field_draw(SURFACE)
+            Code.Swords.make_button_draw(SURFACE)
+            Code.Swords.made_drawing(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
 
