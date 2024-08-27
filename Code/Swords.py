@@ -24,6 +24,8 @@ made_max_distance = 600
 made_min_angle = 270
 made_max_angle = 300
 
+pick_distance = 40
+
 
 def info_import():
     file = open("Code/swords.txt", "r")
@@ -60,6 +62,12 @@ make_button_clicked = 0
 
 made_swords = []
 
+swords = []
+
+picking = False
+picked_sword = 0
+picked_position = (0, 0)
+
 
 class MadeSword:
     def __init__(self):
@@ -79,6 +87,15 @@ class MadeSword:
 
     def draw(self, surface):
         surface.blit(images[0], (self.position[0] - size[0] / 2, self.position[1] - size[1] / 2))
+
+
+class Sword:
+    def __init__(self, position):
+        self.position = position
+        self.rank = 0
+
+    def draw(self, surface):
+        surface.blit(images[self.rank], (self.position[0] - size[0] / 2, self.position[1] - size[1] / 2))
 
 
 def field_draw(surface):
@@ -110,10 +127,52 @@ def make_button_click_up():
 
 
 def made_calculation(fps):
+    global made_swords
+    global swords
     for index in range(len(made_swords)):
+        before_position = list(made_swords[index].position)
         made_swords[index].move(fps)
 
+        if before_position == made_swords[index].position:
+            swords.append(Sword(made_swords[index].position))
+            made_swords[index] = 0
 
-def made_drawing(surface):
+    for repeat in range(made_swords.count(0)):
+        made_swords.remove(0)
+
+
+def made_draw(surface):
     for index in range(len(made_swords)):
         made_swords[index].draw(surface)
+
+
+def draw(surface):
+    for index in range(len(swords)):
+        if not picking or not picked_sword == index:
+            swords[index].draw(surface)
+
+
+def pick(position):
+    global picked_sword
+    global picking
+    global picked_position
+    for index in range(len(swords)):
+        distance = math.dist(swords[index].position, position)
+
+        if distance <= pick_distance:
+            if picking:
+                if math.dist(picked_position, position) >= distance:
+                    picked_sword = index
+                    picking = True
+                    picked_position = (position[0] - swords[index].position[0], position[1] - swords[index].position[1])
+
+            else:
+                picked_sword = index
+                picking = True
+                picked_position = (position[0] - swords[index].position[0], position[1] - swords[index].position[1])
+
+
+def pick_draw(surface, mouse_pos):
+    if picking:
+        surface.blit(images[swords[picked_sword].rank],
+                     (mouse_pos[0] - picked_position[0] - size[0] / 2, mouse_pos[1] - picked_position[1] - size[1] / 2))
