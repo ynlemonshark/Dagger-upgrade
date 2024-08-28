@@ -161,7 +161,7 @@ def pick(position):
 
         if distance <= pick_distance:
             if picking:
-                if math.dist(picked_position, position) >= distance:
+                if math.dist(swords[index].position, position) >= distance:
                     picked_sword = index
                     picking = True
                     picked_position = (position[0] - swords[index].position[0], position[1] - swords[index].position[1])
@@ -170,6 +170,19 @@ def pick(position):
                 picked_sword = index
                 picking = True
                 picked_position = (position[0] - swords[index].position[0], position[1] - swords[index].position[1])
+
+
+def pick_down(position):
+    global picking
+    if picking:
+        picking = False
+        sword_rect = pygame.Rect((0, 0), size)
+        sword_rect.center = (position[0] - picked_position[0], position[1] - picked_position[1])
+        if field_rect.left <= sword_rect.left <= field_rect.right and \
+           field_rect.left <= sword_rect.right <= field_rect.right and \
+           field_rect.top <= sword_rect.top <= field_rect.bottom and \
+           field_rect.top <= sword_rect.bottom <= field_rect.bottom:
+            swords[picked_sword].position = sword_rect.center
 
 
 def pick_draw(surface, mouse_pos):

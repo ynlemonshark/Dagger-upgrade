@@ -57,6 +57,7 @@ def main():
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
                 Code.Swords.make_button_click_up()
+                Code.Swords.pick_down(event_pos)
 
         # calculation
         mouse_pos = pygame.mouse.get_pos()
