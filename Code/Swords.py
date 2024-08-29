@@ -3,28 +3,6 @@ import math
 import random
 
 # parameters
-field_rect = pygame.Rect(600, 0, 600, 600)
-field_image = pygame.transform.scale(pygame.image.load("resources/swords_field_frame.png"), field_rect.size)
-
-# make button
-make_button_rect = pygame.Rect(600, 600, 200, 200)
-make_button_image = pygame.transform.scale(pygame.image.load("resources/sword_make_button.png"),
-                                           (make_button_rect.width, make_button_rect.height * 2))
-
-make_button_gage_rect = pygame.Rect(625, 725, 150, 30)
-make_gage_color = (191, 0, 0)
-
-size = (64, 64)
-
-made_resistance = 1000
-
-made_min_distance = 400
-made_max_distance = 600
-
-made_min_angle = 270
-made_max_angle = 300
-
-pick_distance = 40
 
 
 def info_import():
@@ -41,18 +19,49 @@ def info_import():
     return [swords_name]
 
 
-def image_import(count):
+def image_import(count, sword_siae):
     images = []
     for repeat in range(count):
-        images.append(pygame.transform.scale(pygame.image.load("resources/swords/{}.png".format(repeat)), size))
+        images.append(pygame.transform.scale(pygame.image.load("resources/swords/{}.png".format(repeat)), sword_siae))
 
     return images
 
 
+size = (64, 64)
+
 data = info_import()
 names = data[0]
 
-images = image_import(len(names))
+images = image_import(len(names), size)
+
+field_rect = pygame.Rect(600, 0, 600, 600)
+field_image = pygame.transform.scale(pygame.image.load("resources/swords_field_frame.png"), field_rect.size)
+
+# make button
+make_button_rect = pygame.Rect(600, 600, 600, 100)
+make_button_image = pygame.transform.scale(pygame.image.load("resources/sword_make_button.png"),
+                                           (make_button_rect.width, make_button_rect.height * 2))
+
+make_button_gage_rect = pygame.Rect(800, 625, 375, 50)
+make_gage_color = (191, 0, 0)
+
+# upgrade slot
+upgrade_slot_rect = pygame.Rect(0, 0, 200, 200)
+upgrade_slot_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_slot.png"),
+                                            upgrade_slot_rect.size)
+upgrade_slot_sword_rect = pygame.Rect(36, 36, 128, 128)
+upgrade_slot_sword_images = image_import(len(names), upgrade_slot_sword_rect.size)
+
+made_resistance = 1000
+
+made_min_distance = 400
+made_max_distance = 600
+
+made_min_angle = 240
+made_max_angle = 300
+
+pick_distance = 40
+
 
 # variable
 make_gage = 0
@@ -67,6 +76,8 @@ swords = []
 picking = False
 picked_sword = 0
 picked_position = (0, 0)
+
+upgrade_slot = "empty"
 
 
 class MadeSword:
@@ -174,6 +185,7 @@ def pick(position):
 
 def pick_down(position):
     global picking
+    global upgrade_slot
     if picking:
         picking = False
         sword_rect = pygame.Rect((0, 0), size)
@@ -183,9 +195,19 @@ def pick_down(position):
            field_rect.top <= sword_rect.top <= field_rect.bottom and \
            field_rect.top <= sword_rect.bottom <= field_rect.bottom:
             swords[picked_sword].position = sword_rect.center
+        elif upgrade_slot_rect.collidepoint(position):
+            upgrade_slot = swords[picked_sword]
+            swords[picked_sword] = 0
+            swords.remove(0)
 
 
 def pick_draw(surface, mouse_pos):
     if picking:
         surface.blit(images[swords[picked_sword].rank],
                      (mouse_pos[0] - picked_position[0] - size[0] / 2, mouse_pos[1] - picked_position[1] - size[1] / 2))
+
+
+def upgrade_slot_draw(surface):
+    surface.blit(upgrade_slot_image, upgrade_slot_rect.topleft)
+    if not upgrade_slot == "empty":
+        surface.blit(upgrade_slot_sword_images[upgrade_slot.rank], upgrade_slot_sword_rect.topleft)

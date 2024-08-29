@@ -73,6 +73,7 @@ def main():
             Code.Swords.make_button_draw(SURFACE)
             Code.Swords.made_draw(SURFACE)
             Code.Swords.draw(SURFACE)
+            Code.Swords.upgrade_slot_draw(SURFACE)
             Code.Swords.pick_draw(SURFACE, mouse_pos)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
