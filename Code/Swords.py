@@ -52,6 +52,10 @@ upgrade_slot_image = pygame.transform.scale(pygame.image.load("resources/sword_u
 upgrade_slot_sword_rect = pygame.Rect(36, 36, 128, 128)
 upgrade_slot_sword_images = image_import(len(names), upgrade_slot_sword_rect.size)
 
+upgrade_slot_information_rect = pygame.Rect(200, 0, 400, 200)
+upgrade_slot_information_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_info_slot.png"),
+                                                        upgrade_slot_information_rect.size)
+
 made_resistance = 1000
 
 made_min_distance = 400
@@ -209,5 +213,6 @@ def pick_draw(surface, mouse_pos):
 
 def upgrade_slot_draw(surface):
     surface.blit(upgrade_slot_image, upgrade_slot_rect.topleft)
+    surface.blit(upgrade_slot_information_image, upgrade_slot_information_rect.topleft)
     if not upgrade_slot == "empty":
         surface.blit(upgrade_slot_sword_images[upgrade_slot.rank], upgrade_slot_sword_rect.topleft)
