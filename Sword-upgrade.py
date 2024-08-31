@@ -53,6 +53,7 @@ def main():
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
                 Code.Swords.make_button_click_down(event_pos)
                 Code.Swords.pick(event_pos)
+                Code.Swords.upgrade_slot_click(event_pos)
 
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
@@ -71,10 +72,10 @@ def main():
         if channel == "swordField":
             Code.Swords.field_draw(SURFACE)
             Code.Swords.make_button_draw(SURFACE)
-            Code.Swords.made_draw(SURFACE)
             Code.Swords.draw(SURFACE)
             Code.Swords.upgrade_slot_draw(SURFACE)
             Code.Swords.pick_draw(SURFACE, mouse_pos)
+            Code.Swords.made_draw(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
 

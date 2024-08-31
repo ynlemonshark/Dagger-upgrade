@@ -56,13 +56,19 @@ upgrade_slot_information_rect = pygame.Rect(200, 0, 400, 200)
 upgrade_slot_information_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_info_slot.png"),
                                                         upgrade_slot_information_rect.size)
 
+upgrade_slot_made_min_distance = 700
+upgrade_slot_made_max_distance = 900
+
+upgrade_slot_made_min_angle = 0
+upgrade_slot_made_max_angle = 30
+
 made_resistance = 1000
 
 made_min_distance = 400
 made_max_distance = 600
 
-made_min_angle = 240
-made_max_angle = 300
+made_min_angle = 250
+made_max_angle = 290
 
 pick_distance = 40
 
@@ -85,11 +91,12 @@ upgrade_slot = "empty"
 
 
 class MadeSword:
-    def __init__(self):
-        self.position = list(make_button_rect.center)
-        self.speed = math.sqrt(2 * made_resistance * random.randint(made_min_distance, made_max_distance))
+    def __init__(self, rank, position, speed, direction):
+        self.position = list(position)
+        self.speed = math.sqrt(2 * made_resistance * speed)
         self.time = 0
-        self.direction = math.radians(random.randint(made_min_angle, made_max_angle))
+        self.rank = rank
+        self.direction = math.radians(direction)
 
     def move(self, fps):
         before_time = self.time
@@ -101,13 +108,13 @@ class MadeSword:
         self.position[1] += distance * math.sin(self.direction)
 
     def draw(self, surface):
-        surface.blit(images[0], (self.position[0] - size[0] / 2, self.position[1] - size[1] / 2))
+        surface.blit(images[self.rank], (self.position[0] - size[0] / 2, self.position[1] - size[1] / 2))
 
 
 class Sword:
-    def __init__(self, position):
+    def __init__(self, position, rank):
         self.position = position
-        self.rank = 0
+        self.rank = rank
 
     def draw(self, surface):
         surface.blit(images[self.rank], (self.position[0] - size[0] / 2, self.position[1] - size[1] / 2))
@@ -133,7 +140,9 @@ def make_button_click_down(position):
         make_button_clicked = 1
         while make_gage >= make_gage_max:
             make_gage -= make_gage_max
-            made_swords.append(MadeSword())
+            made_swords.append(MadeSword(0, list(make_button_rect.center),
+                                         random.randint(made_min_distance, made_max_distance),
+                                         random.randint(made_min_angle, made_max_angle)))
 
 
 def make_button_click_up():
@@ -149,7 +158,7 @@ def made_calculation(fps):
         made_swords[index].move(fps)
 
         if before_position == made_swords[index].position:
-            swords.append(Sword(made_swords[index].position))
+            swords.append(Sword(made_swords[index].position, made_swords[index].rank))
             made_swords[index] = 0
 
     for repeat in range(made_swords.count(0)):
@@ -200,6 +209,12 @@ def pick_down(position):
            field_rect.top <= sword_rect.bottom <= field_rect.bottom:
             swords[picked_sword].position = sword_rect.center
         elif upgrade_slot_rect.collidepoint(position):
+            if upgrade_slot != "empty":
+                made_swords.append(MadeSword(upgrade_slot.rank, upgrade_slot_rect.center,
+                                             random.randint(upgrade_slot_made_min_distance,
+                                                            upgrade_slot_made_max_distance)
+                                             , random.randint(upgrade_slot_made_min_angle,
+                                                              upgrade_slot_made_max_angle)))
             upgrade_slot = swords[picked_sword]
             swords[picked_sword] = 0
             swords.remove(0)
@@ -216,3 +231,15 @@ def upgrade_slot_draw(surface):
     surface.blit(upgrade_slot_information_image, upgrade_slot_information_rect.topleft)
     if not upgrade_slot == "empty":
         surface.blit(upgrade_slot_sword_images[upgrade_slot.rank], upgrade_slot_sword_rect.topleft)
+
+
+def upgrade_slot_click(position):
+    global upgrade_slot
+    if upgrade_slot_rect.collidepoint(position):
+        if upgrade_slot != "empty":
+            made_swords.append(MadeSword(upgrade_slot.rank, upgrade_slot_rect.center,
+                                         random.randint(upgrade_slot_made_min_distance,
+                                                        upgrade_slot_made_max_distance)
+                                         , random.randint(upgrade_slot_made_min_angle,
+                                                          upgrade_slot_made_max_angle)))
+            upgrade_slot = "empty"
