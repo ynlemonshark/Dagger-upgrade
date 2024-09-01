@@ -2,8 +2,9 @@ import pygame
 import sys
 from pygame.locals import QUIT, Rect
 
-import Code.Swords
+import Font.Font
 
+import Code.Swords
 
 def setting_import():
     settings_file = open("setting.txt", "r")

@@ -2,6 +2,9 @@ import pygame
 import math
 import random
 
+import Font.Font
+import Font.tool
+
 # parameters
 
 
@@ -19,10 +22,10 @@ def info_import():
     return [swords_name]
 
 
-def image_import(count, sword_siae):
+def image_import(count, sword_size):
     images = []
     for repeat in range(count):
-        images.append(pygame.transform.scale(pygame.image.load("resources/swords/{}.png".format(repeat)), sword_siae))
+        images.append(pygame.transform.scale(pygame.image.load("resources/swords/{}.png".format(repeat)), sword_size))
 
     return images
 
@@ -61,6 +64,10 @@ upgrade_slot_made_max_distance = 900
 
 upgrade_slot_made_min_angle = 0
 upgrade_slot_made_max_angle = 30
+
+upgrade_slot_information_text_topleft = (220, 20)
+upgrade_slot_information_text_size = (18, 18)
+upgrade_slot_information_name_color = 0
 
 made_resistance = 1000
 
@@ -231,6 +238,11 @@ def upgrade_slot_draw(surface):
     surface.blit(upgrade_slot_information_image, upgrade_slot_information_rect.topleft)
     if not upgrade_slot == "empty":
         surface.blit(upgrade_slot_sword_images[upgrade_slot.rank], upgrade_slot_sword_rect.topleft)
+        surface.blit(Font.Font.render(names[upgrade_slot.rank],
+                                      Font.tool.filled_list(upgrade_slot_information_name_color,
+                                                            len(names[upgrade_slot.rank])),
+                                      upgrade_slot_information_text_size),
+                     upgrade_slot_information_text_topleft)
 
 
 def upgrade_slot_click(position):
