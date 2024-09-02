@@ -11,15 +11,24 @@ import Font.tool
 def info_import():
     file = open("Code/swords.txt", "r")
     swords_name = []
+    swords_price = []
+    swords_success = []
+    swords_fail = []
+    swords_destroy = []
     while True:
         line = file.readline()
         line = line.replace("\n", "")
         if not line:
             break
-        swords_name.append(line)
+        line = line.split(",")
+        swords_name.append(line[0])
+        swords_price.append(int(line[1]))
+        swords_success.append(int(line[2]))
+        swords_fail.append(int(line[3]))
+        swords_destroy.append(int(line[4]))
 
     file.close()
-    return [swords_name]
+    return (swords_name, swords_price, swords_success, swords_fail, swords_destroy)
 
 
 def image_import(count, sword_size):
@@ -34,6 +43,10 @@ size = (64, 64)
 
 data = info_import()
 names = data[0]
+prices = data[1]
+success_chance = data[2]
+fail_chance = data[3]
+destroy_chance = data[4]
 
 images = image_import(len(names), size)
 
@@ -69,6 +82,55 @@ upgrade_slot_information_text_topleft = (220, 20)
 upgrade_slot_information_text_size = (18, 18)
 upgrade_slot_information_name_color = 0
 
+upgrade_slot_chance_size = (200, 50)
+
+upgrade_slot_chance_success_rect = pygame.Rect((0, 200), upgrade_slot_chance_size)
+upgrade_slot_chance_fail_rect = pygame.Rect((200, 200), upgrade_slot_chance_size)
+upgrade_slot_chance_destroy_rect = pygame.Rect((400, 200), upgrade_slot_chance_size)
+
+upgrade_slot_chance_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_chance.png"),
+                                                   upgrade_slot_chance_size)
+
+upgrade_slot_chance_success_text_color = 6
+upgrade_slot_chance_fail_text_color = 2
+upgrade_slot_chance_destroy_text_color = 3
+
+upgrade_slot_chance_text_size = (18, 18)
+
+upgrade_button_rect = pygame.Rect(400, 250, 200, 75)
+upgrade_button_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_button.png"),
+                                              upgrade_button_rect.size)
+upgrade_button_image_enable = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_button_enable.png"),
+                                                     upgrade_button_rect.size)
+
+upgrade_button_text = Font.Font.render("upgrade", Font.tool.filled_list(0, 7), (18, 18))
+upgrade_button_text_rect = upgrade_button_text.get_rect()
+upgrade_button_text_rect.center = (upgrade_button_rect.left + 100, upgrade_button_rect.top + 25)
+
+upgrade_gage_rect = pygame.Rect(0, 250, 400, 75)
+upgrade_gage_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_gage.png"), upgrade_gage_rect.size)
+
+upgrade_gage_inside_rect = pygame.Rect(0, 260, 400, 55)
+upgrade_gage_color_success = (67, 224, 0)
+upgrade_gage_color_fail = (128, 128, 128)
+upgrade_gage_color_destroy = (224, 0, 0)
+
+upgrade_gage_resistance = 150
+
+upgrade_gage_cursor_size = (25, 75)
+upgrade_gage_cursor_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_cursor.png"),
+                                                   upgrade_gage_cursor_size)
+
+upgrade_effect_rect = pygame.Rect(0, 0, 600, 325)
+upgrade_effect_success_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_effect_success.png"),
+                                                      upgrade_effect_rect.size)
+upgrade_effect_fail_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_effect_fail.png"),
+                                                   upgrade_effect_rect.size)
+upgrade_effect_destroy_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_effect_destroy.png"),
+                                                      upgrade_effect_rect.size)
+
+upgrade_effect_time = 1000
+
 made_resistance = 1000
 
 made_min_distance = 400
@@ -95,6 +157,15 @@ picked_sword = 0
 picked_position = (0, 0)
 
 upgrade_slot = "empty"
+
+upgrading = False
+upgrade_gage = 0
+upgrade_gage_speed = 0
+upgrade_gage_time = 0
+upgrade_gage_life = 0
+
+upgrade_effect_type = 0
+upgrade_effect_delay = 0
 
 
 class MadeSword:
@@ -125,6 +196,9 @@ class Sword:
 
     def draw(self, surface):
         surface.blit(images[self.rank], (self.position[0] - size[0] / 2, self.position[1] - size[1] / 2))
+
+    def rank_up(self):
+        self.rank += 1
 
 
 def field_draw(surface):
@@ -236,6 +310,15 @@ def pick_draw(surface, mouse_pos):
 def upgrade_slot_draw(surface):
     surface.blit(upgrade_slot_image, upgrade_slot_rect.topleft)
     surface.blit(upgrade_slot_information_image, upgrade_slot_information_rect.topleft)
+
+    surface.blit(upgrade_slot_chance_image, upgrade_slot_chance_success_rect.topleft)
+    surface.blit(upgrade_slot_chance_image, upgrade_slot_chance_fail_rect.topleft)
+    surface.blit(upgrade_slot_chance_image, upgrade_slot_chance_destroy_rect.topleft)
+
+    surface.blit(upgrade_button_image, upgrade_button_rect.topleft)
+    surface.blit(upgrade_button_text, upgrade_button_text_rect.topleft)
+
+    surface.blit(upgrade_gage_image, upgrade_gage_rect.topleft)
     if not upgrade_slot == "empty":
         surface.blit(upgrade_slot_sword_images[upgrade_slot.rank], upgrade_slot_sword_rect.topleft)
         surface.blit(Font.Font.render(names[upgrade_slot.rank],
@@ -244,14 +327,137 @@ def upgrade_slot_draw(surface):
                                       upgrade_slot_information_text_size),
                      upgrade_slot_information_text_topleft)
 
+        # - chance -
+        text_string = "success:{}".format(success_chance[upgrade_slot.rank])
+        text_image = Font.Font.render(text_string,
+                                      Font.tool.filled_list(upgrade_slot_chance_success_text_color, len(text_string))
+                                      , upgrade_slot_chance_text_size)
+        text_image_rect = text_image.get_rect()
+        text_image_rect.center = upgrade_slot_chance_success_rect.center
+        surface.blit(text_image, text_image_rect.topleft)
+
+        text_string = "fail:{}".format(fail_chance[upgrade_slot.rank])
+        text_image = Font.Font.render(text_string,
+                                      Font.tool.filled_list(upgrade_slot_chance_fail_text_color, len(text_string))
+                                      , upgrade_slot_chance_text_size)
+        text_image_rect = text_image.get_rect()
+        text_image_rect.center = upgrade_slot_chance_fail_rect.center
+        surface.blit(text_image, text_image_rect.topleft)
+
+        text_string = "destroy:{}".format(destroy_chance[upgrade_slot.rank])
+        text_image = Font.Font.render(text_string,
+                                      Font.tool.filled_list(upgrade_slot_chance_destroy_text_color, len(text_string))
+                                      , upgrade_slot_chance_text_size)
+        text_image_rect = text_image.get_rect()
+        text_image_rect.center = upgrade_slot_chance_destroy_rect.center
+        surface.blit(text_image, text_image_rect.topleft)
+        # - chance -
+
+        if not upgrading:
+            surface.blit(upgrade_button_image_enable, upgrade_button_rect.topleft)
+            surface.blit(upgrade_button_text, upgrade_button_text_rect.topleft)
+
+        pygame.draw.rect(surface, upgrade_gage_color_success,
+                         (upgrade_gage_inside_rect.topleft,
+                          (upgrade_gage_inside_rect.width * success_chance[upgrade_slot.rank] / 100,
+                           upgrade_gage_inside_rect.height)))
+        pygame.draw.rect(surface, upgrade_gage_color_fail,
+                         ((upgrade_gage_inside_rect.left +
+                           upgrade_gage_inside_rect.width * success_chance[upgrade_slot.rank] / 100,
+                           upgrade_gage_inside_rect.top),
+                          (upgrade_gage_inside_rect.width * fail_chance[upgrade_slot.rank] / 100,
+                           upgrade_gage_inside_rect.height)))
+        pygame.draw.rect(surface, upgrade_gage_color_destroy,
+                         ((upgrade_gage_inside_rect.left +
+                           upgrade_gage_inside_rect.width * success_chance[upgrade_slot.rank] / 100 +
+                           upgrade_gage_inside_rect.width * fail_chance[upgrade_slot.rank] / 100,
+                           upgrade_gage_inside_rect.top),
+                          (upgrade_gage_inside_rect.width * destroy_chance[upgrade_slot.rank] / 100,
+                           upgrade_gage_inside_rect.height)))
+
+        if upgrading:
+            extra_distance = upgrade_gage_speed ** 2 / 2 / upgrade_gage_resistance - \
+                             (upgrade_gage_life - upgrade_gage_time) *\
+                             (upgrade_gage_speed - upgrade_gage_time * upgrade_gage_resistance) / 2
+            if extra_distance < 100:
+                surface.blit(upgrade_gage_cursor_image,
+                             (upgrade_gage_inside_rect.left + upgrade_gage_inside_rect.width -
+                              (extra_distance / 100 * upgrade_gage_inside_rect.width) - upgrade_gage_cursor_size[0] / 2,
+                              upgrade_gage_rect.top))
+            else:
+                surface.blit(upgrade_gage_cursor_image,
+                             (upgrade_gage_inside_rect.left +
+                              ((extra_distance - 100) / 100 * upgrade_gage_inside_rect.width) - upgrade_gage_cursor_size[0] / 2,
+                              upgrade_gage_rect.top))
+
 
 def upgrade_slot_click(position):
     global upgrade_slot
     if upgrade_slot_rect.collidepoint(position):
-        if upgrade_slot != "empty":
+        if upgrade_slot != "empty" and not upgrading:
             made_swords.append(MadeSword(upgrade_slot.rank, upgrade_slot_rect.center,
                                          random.randint(upgrade_slot_made_min_distance,
                                                         upgrade_slot_made_max_distance)
                                          , random.randint(upgrade_slot_made_min_angle,
                                                           upgrade_slot_made_max_angle)))
             upgrade_slot = "empty"
+
+
+def upgrade_button_click(position):
+    global upgrading
+    global upgrade_gage
+    global upgrade_gage_speed
+    global upgrade_gage_time
+    global upgrade_gage_life
+    if upgrade_button_rect.collidepoint(position) and not upgrading and upgrade_slot != "empty":
+        upgrading = True
+
+        upgrade_gage = random.randint(0, 99)
+
+        upgrade_gage_time = 0
+        upgrade_gage_speed = math.sqrt(2 * upgrade_gage_resistance * (upgrade_gage + 100))
+
+        upgrade_gage_life = upgrade_gage_speed / upgrade_gage_resistance
+
+
+def upgrade_gage_calculation(fps):
+    global upgrade_gage_time
+    global upgrading
+    global upgrade_slot
+
+    global upgrade_effect_type
+    global upgrade_effect_delay
+    if upgrading:
+        upgrade_gage_time += 1 / fps
+        if upgrade_gage_time >= upgrade_gage_life:
+            upgrading = False
+
+            if upgrade_gage < success_chance[upgrade_slot.rank]:
+                upgrade_slot.rank_up()
+                upgrade_effect_type = 0
+                upgrade_effect_delay = upgrade_effect_time
+            elif upgrade_gage - success_chance[upgrade_slot.rank] < fail_chance[upgrade_slot.rank]:
+                upgrade_effect_type = 1
+                upgrade_effect_delay = upgrade_effect_time
+            else:
+                upgrade_slot = "empty"
+                upgrade_effect_type = 2
+                upgrade_effect_delay = upgrade_effect_time
+
+
+def upgrade_effect_draw(surface):
+    if upgrade_effect_type == 0:
+        upgrade_effect_success_image.set_alpha(255 * upgrade_effect_delay / upgrade_effect_time)
+        surface.blit(upgrade_effect_success_image, upgrade_effect_rect.topleft)
+    if upgrade_effect_type == 1:
+        upgrade_effect_fail_image.set_alpha(255 * upgrade_effect_delay / upgrade_effect_time)
+        surface.blit(upgrade_effect_fail_image, upgrade_effect_rect.topleft)
+    if upgrade_effect_type == 2:
+        upgrade_effect_destroy_image.set_alpha(255 * upgrade_effect_delay / upgrade_effect_time)
+        surface.blit(upgrade_effect_destroy_image, upgrade_effect_rect.topleft)
+
+
+def upgrade_effect_calculation(fps):
+    global upgrade_effect_delay
+    if upgrade_effect_delay:
+        upgrade_effect_delay -= 1000 / fps

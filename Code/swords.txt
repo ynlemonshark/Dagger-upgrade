@@ -1,8 +1,9 @@
-wooden sword
-stone sword
-rusty copper sword
-copper sword
-aluminum sword
-iron sword
-golden sword
-diamond sword
+wooden sword,3,95,5,0,1
+stone sword,10,90,10,0,5
+rusty copper sword,30,87,10,3,10
+copper sword,50,86,11,3,20
+aluminum sword,100,84,11,5,30
+iron sword,250,80,15,5,70
+golden sword,600,75,17,8,100
+emerald sword,1000,73,17,10,200
+diamond sword,2200,72,18,10,350
