@@ -115,7 +115,7 @@ upgrade_gage_color_success = (67, 224, 0)
 upgrade_gage_color_fail = (128, 128, 128)
 upgrade_gage_color_destroy = (224, 0, 0)
 
-upgrade_gage_resistance = 150
+upgrade_gage_resistance = 200
 
 upgrade_gage_cursor_size = (25, 75)
 upgrade_gage_cursor_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_cursor.png"),
@@ -129,7 +129,7 @@ upgrade_effect_fail_image = pygame.transform.scale(pygame.image.load("resources/
 upgrade_effect_destroy_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_effect_destroy.png"),
                                                       upgrade_effect_rect.size)
 
-upgrade_effect_time = 1000
+upgrade_effect_time = 800
 
 made_resistance = 1000
 
