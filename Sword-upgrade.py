@@ -41,14 +41,24 @@ FPSCLOCK = pygame.time.Clock()
 
 
 def main():
+    global DISPLAY
     gameStart = True
     channel = "swordField"
+    fullScreen = False
     while True:
         pygame_events = pygame.event.get()
         for pygame_event in pygame_events:
             if pygame_event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+
+            elif pygame_event.type == pygame.KEYUP:
+                if pygame_event.key == pygame.K_F1:
+                    if fullScreen:
+                        DISPLAY = pygame.display.set_mode((Display_width, Display_height))
+                    else:
+                        DISPLAY = pygame.display.set_mode((Display_width, Display_height), pygame.FULLSCREEN)
+                    fullScreen = not fullScreen
 
             elif pygame_event.type == pygame.MOUSEBUTTONDOWN:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
