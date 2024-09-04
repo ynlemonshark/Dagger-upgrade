@@ -5,6 +5,7 @@ from pygame.locals import QUIT, Rect
 import Font.Font
 
 import Code.Swords
+import Code.Coin
 
 def setting_import():
     settings_file = open("setting.txt", "r")
@@ -43,7 +44,7 @@ FPSCLOCK = pygame.time.Clock()
 def main():
     global DISPLAY
     gameStart = True
-    channel = "swordField"
+    channel = "Forge"
     fullScreen = False
     while True:
         pygame_events = pygame.event.get()
@@ -62,15 +63,17 @@ def main():
 
             elif pygame_event.type == pygame.MOUSEBUTTONDOWN:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
-                Code.Swords.make_button_click_down(event_pos)
-                Code.Swords.pick(event_pos)
-                Code.Swords.upgrade_slot_click(event_pos)
-                Code.Swords.upgrade_button_click(event_pos)
+                if channel == "Forge":
+                    Code.Swords.make_button_click_down(event_pos)
+                    Code.Swords.pick(event_pos)
+                    Code.Swords.upgrade_slot_click(event_pos)
+                    Code.Swords.upgrade_button_click(event_pos, Code.Coin.amount)
 
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
-                Code.Swords.make_button_click_up()
-                Code.Swords.pick_down(event_pos)
+                if channel == "Forge":
+                    Code.Swords.make_button_click_up()
+                    Code.Swords.pick_down(event_pos)
 
         # calculation
         mouse_pos = pygame.mouse.get_pos()
@@ -83,14 +86,15 @@ def main():
         # draw
 
         SURFACE.fill((255, 0, 0))
-        if channel == "swordField":
+        if channel == "Forge":
             Code.Swords.field_draw(SURFACE)
             Code.Swords.make_button_draw(SURFACE)
             Code.Swords.draw(SURFACE)
-            Code.Swords.upgrade_slot_draw(SURFACE)
+            Code.Swords.upgrade_slot_draw(SURFACE, Code.Coin.amount.amount)
             Code.Swords.pick_draw(SURFACE, mouse_pos)
             Code.Swords.made_draw(SURFACE)
             Code.Swords.upgrade_effect_draw(SURFACE)
+            Code.Coin.forge_draw(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
 

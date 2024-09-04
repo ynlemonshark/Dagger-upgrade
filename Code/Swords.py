@@ -15,6 +15,7 @@ def info_import():
     swords_success = []
     swords_fail = []
     swords_destroy = []
+    swords_upgrade_cost = []
     while True:
         line = file.readline()
         line = line.replace("\n", "")
@@ -26,9 +27,10 @@ def info_import():
         swords_success.append(int(line[2]))
         swords_fail.append(int(line[3]))
         swords_destroy.append(int(line[4]))
+        swords_upgrade_cost.append(int(line[5]))
 
     file.close()
-    return (swords_name, swords_price, swords_success, swords_fail, swords_destroy)
+    return (swords_name, swords_price, swords_success, swords_fail, swords_destroy, swords_upgrade_cost)
 
 
 def image_import(count, sword_size):
@@ -47,10 +49,11 @@ prices = data[1]
 success_chance = data[2]
 fail_chance = data[3]
 destroy_chance = data[4]
+upgrade_cost = data[5]
 
 images = image_import(len(names), size)
 
-field_rect = pygame.Rect(600, 0, 600, 600)
+field_rect = pygame.Rect(600, 50, 600, 550)
 field_image = pygame.transform.scale(pygame.image.load("resources/swords_field_frame.png"), field_rect.size)
 
 # make button
@@ -107,6 +110,10 @@ upgrade_button_text = Font.Font.render("upgrade", Font.tool.filled_list(0, 7), (
 upgrade_button_text_rect = upgrade_button_text.get_rect()
 upgrade_button_text_rect.center = (upgrade_button_rect.left + 100, upgrade_button_rect.top + 25)
 
+upgrade_button_cost_text = "cost:{}"
+upgrade_button_cost_text_size = (18, 18)
+upgrade_button_cost_text_center = (500, 300)
+
 upgrade_gage_rect = pygame.Rect(0, 250, 400, 75)
 upgrade_gage_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_gage.png"), upgrade_gage_rect.size)
 
@@ -134,7 +141,7 @@ upgrade_effect_time = 800
 made_resistance = 1000
 
 made_min_distance = 400
-made_max_distance = 600
+made_max_distance = 550
 
 made_min_angle = 250
 made_max_angle = 290
@@ -307,7 +314,7 @@ def pick_draw(surface, mouse_pos):
                      (mouse_pos[0] - picked_position[0] - size[0] / 2, mouse_pos[1] - picked_position[1] - size[1] / 2))
 
 
-def upgrade_slot_draw(surface):
+def upgrade_slot_draw(surface, coin):
     surface.blit(upgrade_slot_image, upgrade_slot_rect.topleft)
     surface.blit(upgrade_slot_information_image, upgrade_slot_information_rect.topleft)
 
@@ -353,9 +360,17 @@ def upgrade_slot_draw(surface):
         surface.blit(text_image, text_image_rect.topleft)
         # - chance -
 
-        if not upgrading:
+        if not upgrading and upgrade_cost[upgrade_slot.rank] <= coin:
             surface.blit(upgrade_button_image_enable, upgrade_button_rect.topleft)
             surface.blit(upgrade_button_text, upgrade_button_text_rect.topleft)
+
+        upgrade_button_cost_string = upgrade_button_cost_text.format(str(upgrade_cost[upgrade_slot.rank]))
+        upgrade_button_cost_text_image = Font.Font.render(upgrade_button_cost_string,
+                                                          Font.tool.filled_list(0, len(upgrade_button_cost_string)),
+                                                          upgrade_button_cost_text_size)
+        upgrade_button_cost_text_rect = upgrade_button_cost_text_image.get_rect()
+        upgrade_button_cost_text_rect.center = upgrade_button_cost_text_center
+        surface.blit(upgrade_button_cost_text_image, upgrade_button_cost_text_rect.topleft)
 
         pygame.draw.rect(surface, upgrade_gage_color_success,
                          (upgrade_gage_inside_rect.topleft,
@@ -403,14 +418,16 @@ def upgrade_slot_click(position):
             upgrade_slot = "empty"
 
 
-def upgrade_button_click(position):
+def upgrade_button_click(position, coin):
     global upgrading
     global upgrade_gage
     global upgrade_gage_speed
     global upgrade_gage_time
     global upgrade_gage_life
-    if upgrade_button_rect.collidepoint(position) and not upgrading and upgrade_slot != "empty":
+    if upgrade_button_rect.collidepoint(position) and not upgrading and upgrade_slot != "empty"\
+            and upgrade_cost[upgrade_slot.rank] <= coin.amount:
         upgrading = True
+        coin.minus(upgrade_cost[upgrade_slot.rank])
 
         upgrade_gage = random.randint(0, 99)
 
