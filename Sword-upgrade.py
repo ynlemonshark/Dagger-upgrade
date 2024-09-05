@@ -68,6 +68,7 @@ def main():
                     Code.Swords.pick(event_pos)
                     Code.Swords.upgrade_slot_click(event_pos)
                     Code.Swords.upgrade_button_click(event_pos, Code.Coin.amount)
+                    Code.Swords.sell_button_click(event_pos, Code.Coin.amount)
 
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
@@ -90,6 +91,7 @@ def main():
             Code.Swords.field_draw(SURFACE)
             Code.Swords.make_button_draw(SURFACE)
             Code.Swords.draw(SURFACE)
+            Code.Swords.sell_button_draw(SURFACE)
             Code.Swords.upgrade_slot_draw(SURFACE, Code.Coin.amount.amount)
             Code.Swords.pick_draw(SURFACE, mouse_pos)
             Code.Swords.made_draw(SURFACE)

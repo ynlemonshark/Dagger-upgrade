@@ -111,7 +111,7 @@ upgrade_button_text_rect = upgrade_button_text.get_rect()
 upgrade_button_text_rect.center = (upgrade_button_rect.left + 100, upgrade_button_rect.top + 25)
 
 upgrade_button_cost_text = "cost:{}"
-upgrade_button_cost_text_size = (18, 18)
+upgrade_button_cost_text_size = (9, 9)
 upgrade_button_cost_text_center = (500, 300)
 
 upgrade_gage_rect = pygame.Rect(0, 250, 400, 75)
@@ -135,6 +135,21 @@ upgrade_effect_fail_image = pygame.transform.scale(pygame.image.load("resources/
                                                    upgrade_effect_rect.size)
 upgrade_effect_destroy_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_effect_destroy.png"),
                                                       upgrade_effect_rect.size)
+
+# sell button
+sell_button_rect = pygame.Rect(0, 600, 600, 100)
+sell_button_image = pygame.transform.scale(pygame.image.load("resources/sword_sell_button.png"),
+                                           sell_button_rect.size)
+sell_button_enable_image = pygame.transform.scale(pygame.image.load("resources/sword_sell_button_enable.png"),
+                                                  sell_button_rect.size)
+
+sell_button_sell_text = Font.Font.render("sell", Font.tool.filled_list(0, 4), (27, 27))
+sell_button_sell_text_rect = sell_button_sell_text.get_rect()
+sell_button_sell_text_rect.center = sell_button_rect.center
+
+sell_button_price_text = "sell:{}"
+sell_button_price_text_color = 0
+sell_button_price_text_size = (27, 27)
 
 upgrade_effect_time = 800
 
@@ -478,3 +493,32 @@ def upgrade_effect_calculation(fps):
     global upgrade_effect_delay
     if upgrade_effect_delay:
         upgrade_effect_delay -= 1000 / fps
+
+
+def sell_button_draw(surface):
+    if upgrade_slot == "empty":
+        surface.blit(sell_button_image, sell_button_rect.topleft)
+        surface.blit(sell_button_sell_text, sell_button_sell_text_rect.topleft)
+
+    else:
+        if not upgrading:
+            surface.blit(sell_button_enable_image, sell_button_rect.topleft)
+        else:
+            surface.blit(sell_button_image, sell_button_rect.topleft)
+        price_text = sell_button_price_text.format(prices[upgrade_slot.rank])
+        text = Font.Font.render(price_text,
+                                Font.tool.filled_list(sell_button_price_text_color, len(price_text)),
+                                sell_button_price_text_size)
+        text_rect = text.get_rect()
+        text_rect.center = sell_button_rect.center
+
+        surface.blit(text, text_rect.topleft)
+
+
+def sell_button_click(position, coin):
+    global upgrade_slot
+    if not upgrading and upgrade_slot != "empty":
+        if sell_button_rect.collidepoint(position):
+            coin.plus(prices[upgrade_slot.rank])
+            upgrade_slot = "empty"
+
