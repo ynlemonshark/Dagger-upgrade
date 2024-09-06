@@ -137,7 +137,7 @@ upgrade_effect_destroy_image = pygame.transform.scale(pygame.image.load("resourc
                                                       upgrade_effect_rect.size)
 
 # sell button
-sell_button_rect = pygame.Rect(0, 600, 600, 100)
+sell_button_rect = pygame.Rect(0, 625, 600, 75)
 sell_button_image = pygame.transform.scale(pygame.image.load("resources/sword_sell_button.png"),
                                            sell_button_rect.size)
 sell_button_enable_image = pygame.transform.scale(pygame.image.load("resources/sword_sell_button_enable.png"),
