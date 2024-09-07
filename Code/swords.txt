@@ -7,3 +7,4 @@ iron sword,250,75,12,13,70
 golden sword,600,70,15,15,100
 emerald sword,1000,65,15,20,200
 diamond sword,2200,60,17,23,350
+obsidian sword,4500,55,20,25,650
