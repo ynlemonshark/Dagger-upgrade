@@ -6,6 +6,8 @@ import Font.Font
 
 import Code.Swords
 import Code.Coin
+import Code.Channel
+
 
 def setting_import():
     settings_file = open("setting.txt", "r")
@@ -44,7 +46,6 @@ FPSCLOCK = pygame.time.Clock()
 def main():
     global DISPLAY
     gameStart = True
-    channel = "Forge"
     fullScreen = False
     while True:
         pygame_events = pygame.event.get()
@@ -63,16 +64,17 @@ def main():
 
             elif pygame_event.type == pygame.MOUSEBUTTONDOWN:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
-                if channel == "Forge":
+                if Code.Channel.Channel.channel == "Forge":
                     Code.Swords.make_button_click_down(event_pos)
                     Code.Swords.pick(event_pos)
                     Code.Swords.upgrade_slot_click(event_pos)
                     Code.Swords.upgrade_button_click(event_pos, Code.Coin.amount)
                     Code.Swords.sell_button_click(event_pos, Code.Coin.amount)
+                Code.Channel.big_channel_button_click(event_pos)
 
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
-                if channel == "Forge":
+                if Code.Channel.Channel.channel == "Forge":
                     Code.Swords.make_button_click_up()
                     Code.Swords.pick_down(event_pos)
 
@@ -87,7 +89,7 @@ def main():
         # draw
 
         SURFACE.fill((255, 0, 0))
-        if channel == "Forge":
+        if Code.Channel.Channel.channel == "Forge":
             Code.Swords.field_draw(SURFACE)
             Code.Swords.make_button_draw(SURFACE)
             Code.Swords.draw(SURFACE)
@@ -97,6 +99,7 @@ def main():
             Code.Swords.made_draw(SURFACE)
             Code.Swords.upgrade_effect_draw(SURFACE)
             Code.Coin.forge_draw(SURFACE)
+        Code.Channel.big_channel_buttons_draw(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
 

@@ -311,7 +311,7 @@ def pick_down(position):
            field_rect.top <= sword_rect.top <= field_rect.bottom and \
            field_rect.top <= sword_rect.bottom <= field_rect.bottom:
             swords[picked_sword].position = sword_rect.center
-        elif upgrade_slot_rect.collidepoint(position):
+        elif not upgrading and upgrade_slot_rect.collidepoint(position):
             if upgrade_slot != "empty":
                 made_swords.append(MadeSword(upgrade_slot.rank, upgrade_slot_rect.center,
                                              random.randint(upgrade_slot_made_min_distance,
