@@ -47,6 +47,8 @@ def main():
     global DISPLAY
     gameStart = True
     fullScreen = False
+
+    Code.Channel.background_init((Surface_width, Surface_height))
     while True:
         pygame_events = pygame.event.get()
         for pygame_event in pygame_events:
@@ -89,6 +91,7 @@ def main():
         # draw
 
         SURFACE.fill((255, 0, 0))
+        Code.Channel.background_draw(SURFACE)
         if Code.Channel.Channel.channel == "Forge":
             Code.Swords.field_draw(SURFACE)
             Code.Swords.make_button_draw(SURFACE)

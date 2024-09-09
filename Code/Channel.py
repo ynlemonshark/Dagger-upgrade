@@ -23,6 +23,10 @@ for index in range(len(big_channels)):
         pygame.image.load("resources/big_channel_button/{}.png".format(index)), big_channel_button_icon_size))
 
 
+background_channels = ["Combat"]
+backgrounds = []
+
+
 class ChannelClass:
     def __init__(self, start_channel):
         self.channel = start_channel
@@ -50,3 +54,16 @@ def big_channel_button_click(position):
     for index in range(len(big_channels)):
         if big_channel_button_rects[index].collidepoint(position):
             Channel.shift(big_channels[index][0])
+
+
+def background_init(surface_size):
+    global backgrounds
+    for index in range(len(background_channels)):
+        backgrounds.append(pygame.transform.scale(pygame.image.load(
+            "resources/backgrounds/{}.png".format(background_channels[index])), surface_size))
+
+
+def background_draw(surface):
+    if Channel.channel in background_channels:
+        surface.blit(backgrounds[background_channels.index(Channel.channel)], (0, 0))
+
