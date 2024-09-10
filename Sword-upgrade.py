@@ -7,6 +7,7 @@ import Font.Font
 import Code.Swords
 import Code.Coin
 import Code.Channel
+import Code.Combat
 
 
 def setting_import():
@@ -102,6 +103,9 @@ def main():
             Code.Swords.made_draw(SURFACE)
             Code.Swords.upgrade_effect_draw(SURFACE)
             Code.Coin.forge_draw(SURFACE)
+        if Code.Channel.Channel.channel == "Combat":
+            Code.Combat.combat_setup_button_draw(SURFACE)
+            Code.Combat.combat_setup_slot_draw(SURFACE)
         Code.Channel.big_channel_buttons_draw(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
