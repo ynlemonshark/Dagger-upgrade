@@ -73,6 +73,8 @@ def main():
                     Code.Swords.upgrade_slot_click(event_pos)
                     Code.Swords.upgrade_button_click(event_pos, Code.Coin.amount)
                     Code.Swords.sell_button_click(event_pos, Code.Coin.amount)
+                elif Code.Channel.Channel.channel == "Combat":
+                    Code.Combat.combat_setup_button_click(event_pos, Code.Channel.Channel)
                 Code.Channel.big_channel_button_click(event_pos)
 
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
@@ -106,6 +108,10 @@ def main():
         if Code.Channel.Channel.channel == "Combat":
             Code.Combat.combat_setup_button_draw(SURFACE)
             Code.Combat.combat_setup_slot_draw(SURFACE)
+        if Code.Channel.Channel.channel == "Setup":
+            Code.Swords.field_draw(SURFACE)
+            Code.Swords.draw(SURFACE)
+            Code.Swords.made_draw(SURFACE)
         Code.Channel.big_channel_buttons_draw(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))

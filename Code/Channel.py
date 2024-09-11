@@ -1,7 +1,8 @@
 import pygame
 
 # parameter
-big_channels = (["Forge"], ["Combat"], ["Ability"], ["Encyclopedia"], ["Shop"], ["Dummy"], ["Dummy"], ["Endings"])
+big_channels = (["Forge"], ["Combat", "Setup"], ["Ability"], ["Encyclopedia"], ["Shop"], ["Dummy"], ["Dummy"],
+                ["Endings"])
 
 big_channel_button_first_topleft = (0, 700)
 big_channel_button_size = (150, 100)

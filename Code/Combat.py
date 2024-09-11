@@ -34,3 +34,9 @@ def combat_setup_slot_draw(surface):
         surface.blit(combat_setup_slot_number_texts[index],
                      (combat_setup_slot_toplefts[index][0] + combat_setup_slot_number_text_topleft[0],
                       combat_setup_slot_toplefts[index][1] + combat_setup_slot_number_text_topleft[1]))
+
+
+def combat_setup_button_click(position, channel):
+    if setup_button_rect.collidepoint(position):
+        channel.shift("Setup")
+
