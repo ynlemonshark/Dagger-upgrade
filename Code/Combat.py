@@ -22,6 +22,12 @@ for index in range(len(combat_setup_slot_toplefts)):
                                                            (90, 90)))
     combat_setup_slot_number_texts[index].set_alpha(63)
 
+setup_name_frame_rect = pygame.Rect(0, 0, 1200, 50)
+setup_name_frame_image = pygame.transform.scale(pygame.image.load("resources/setup_name_frame.png"),
+                                                setup_name_frame_rect.size)
+setup_name_frame_text = Font.Font.render("Setup", Font.tool.filled_list(0, 5), (36, 36))
+setup_name_frame_text_topleft = (510, 9)
+
 
 def combat_setup_button_draw(surface):
     surface.blit(setup_button_image, setup_button_rect.topleft)
@@ -39,4 +45,9 @@ def combat_setup_slot_draw(surface):
 def combat_setup_button_click(position, channel):
     if setup_button_rect.collidepoint(position):
         channel.shift("Setup")
+
+
+def setup_name_frame_draw(surface):
+    surface.blit(setup_name_frame_image, setup_name_frame_rect.topleft)
+    surface.blit(setup_name_frame_text, setup_name_frame_text_topleft)
 

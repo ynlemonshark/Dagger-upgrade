@@ -110,6 +110,7 @@ def main():
             Code.Combat.combat_setup_slot_draw(SURFACE)
         if Code.Channel.Channel.channel == "Setup":
             Code.Swords.field_draw(SURFACE)
+            Code.Combat.setup_name_frame_draw(SURFACE)
             Code.Swords.draw(SURFACE)
             Code.Swords.made_draw(SURFACE)
         Code.Channel.big_channel_buttons_draw(SURFACE)
