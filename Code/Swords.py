@@ -299,7 +299,7 @@ def pick(position):
                 picked_position = (position[0] - swords[index].position[0], position[1] - swords[index].position[1])
 
 
-def pick_down(position):
+def pick_down(position, channel):
     global picking
     global upgrade_slot
     if picking:
@@ -311,7 +311,7 @@ def pick_down(position):
            field_rect.top <= sword_rect.top <= field_rect.bottom and \
            field_rect.top <= sword_rect.bottom <= field_rect.bottom:
             swords[picked_sword].position = sword_rect.center
-        elif not upgrading and upgrade_slot_rect.collidepoint(position):
+        elif not upgrading and upgrade_slot_rect.collidepoint(position) and channel == "Forge":
             if upgrade_slot != "empty":
                 made_swords.append(MadeSword(upgrade_slot.rank, upgrade_slot_rect.center,
                                              random.randint(upgrade_slot_made_min_distance,

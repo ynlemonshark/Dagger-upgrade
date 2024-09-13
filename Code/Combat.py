@@ -28,6 +28,16 @@ setup_name_frame_image = pygame.transform.scale(pygame.image.load("resources/set
 setup_name_frame_text = Font.Font.render("Setup", Font.tool.filled_list(0, 5), (36, 36))
 setup_name_frame_text_topleft = (510, 9)
 
+setup_exit_button_rect = pygame.Rect(0, 600, 1200, 100)
+setup_exit_button_image = pygame.transform.scale(pygame.image.load("resources/setup_exit_button.png"),
+                                                 setup_exit_button_rect.size)
+setup_exit_button_text = Font.Font.render("exit", (0, 0, 0, 0), (72, 72))
+setup_exit_button_topleft = (460, 618)
+
+setup_slot_size = (200, 200)
+setup_slot_toplefts = ((0, 50), (200, 50), (400, 50), (0, 250), (200, 250), (400, 250))
+setup_slot_image = pygame.transform.scale(pygame.image.load("resources/setup_slot.png"), setup_slot_size)
+
 
 def combat_setup_button_draw(surface):
     surface.blit(setup_button_image, setup_button_rect.topleft)
@@ -51,3 +61,17 @@ def setup_name_frame_draw(surface):
     surface.blit(setup_name_frame_image, setup_name_frame_rect.topleft)
     surface.blit(setup_name_frame_text, setup_name_frame_text_topleft)
 
+
+def setup_exit_button_draw(surface):
+    surface.blit(setup_exit_button_image, setup_exit_button_rect.topleft)
+    surface.blit(setup_exit_button_text, setup_exit_button_topleft)
+
+
+def setup_exit_button_click(position, channel):
+    if setup_exit_button_rect.collidepoint(position):
+        channel.shift("Combat")
+
+
+def setup_slots_draw(surface):
+    for index in range(len(setup_slot_toplefts)):
+        surface.blit(setup_slot_image, setup_slot_toplefts[index])

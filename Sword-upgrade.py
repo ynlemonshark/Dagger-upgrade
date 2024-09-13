@@ -75,13 +75,18 @@ def main():
                     Code.Swords.sell_button_click(event_pos, Code.Coin.amount)
                 elif Code.Channel.Channel.channel == "Combat":
                     Code.Combat.combat_setup_button_click(event_pos, Code.Channel.Channel)
+                elif Code.Channel.Channel.channel == "Setup":
+                    Code.Swords.pick(event_pos)
+                    Code.Combat.setup_exit_button_click(event_pos, Code.Channel.Channel)
                 Code.Channel.big_channel_button_click(event_pos)
 
             elif pygame_event.type == pygame.MOUSEBUTTONUP:
                 event_pos = (pygame_event.pos[0] / display_ratio_x, pygame_event.pos[1] / display_ratio_y)
                 if Code.Channel.Channel.channel == "Forge":
                     Code.Swords.make_button_click_up()
-                    Code.Swords.pick_down(event_pos)
+                    Code.Swords.pick_down(event_pos, Code.Channel.Channel.channel)
+                elif Code.Channel.Channel.channel == "Setup":
+                    Code.Swords.pick_down(event_pos, Code.Channel.Channel.channel)
 
         # calculation
         mouse_pos = pygame.mouse.get_pos()
@@ -110,9 +115,12 @@ def main():
             Code.Combat.combat_setup_slot_draw(SURFACE)
         if Code.Channel.Channel.channel == "Setup":
             Code.Swords.field_draw(SURFACE)
+            Code.Combat.setup_exit_button_draw(SURFACE)
             Code.Combat.setup_name_frame_draw(SURFACE)
+            Code.Combat.setup_slots_draw(SURFACE)
             Code.Swords.draw(SURFACE)
             Code.Swords.made_draw(SURFACE)
+            Code.Swords.pick_draw(SURFACE, mouse_pos)
         Code.Channel.big_channel_buttons_draw(SURFACE)
 
         DISPLAY.blit(pygame.transform.scale(SURFACE, (Display_width, Display_height)), (0, 0))
