@@ -136,6 +136,8 @@ upgrade_effect_fail_image = pygame.transform.scale(pygame.image.load("resources/
 upgrade_effect_destroy_image = pygame.transform.scale(pygame.image.load("resources/sword_upgrade_effect_destroy.png"),
                                                       upgrade_effect_rect.size)
 
+upgrade_effect_time = 800
+
 # sell button
 sell_button_rect = pygame.Rect(0, 625, 600, 75)
 sell_button_image = pygame.transform.scale(pygame.image.load("resources/sword_sell_button.png"),
@@ -151,7 +153,33 @@ sell_button_price_text = "sell:{}"
 sell_button_price_text_color = 0
 sell_button_price_text_size = (27, 27)
 
-upgrade_effect_time = 800
+# setup
+setup_name_frame_rect = pygame.Rect(0, 0, 1200, 50)
+setup_name_frame_image = pygame.transform.scale(pygame.image.load("resources/setup_name_frame.png"),
+                                                setup_name_frame_rect.size)
+setup_name_frame_text = Font.Font.render("Setup", Font.tool.filled_list(0, 5), (36, 36))
+setup_name_frame_text_topleft = (510, 9)
+
+setup_exit_button_rect = pygame.Rect(0, 600, 1200, 100)
+setup_exit_button_image = pygame.transform.scale(pygame.image.load("resources/setup_exit_button.png"),
+                                                 setup_exit_button_rect.size)
+setup_exit_button_text = Font.Font.render("exit", (0, 0, 0, 0), (72, 72))
+setup_exit_button_topleft = (460, 618)
+
+setup_slot_size = (200, 200)
+setup_slot_toplefts = ((0, 50), (200, 50), (400, 50), (0, 250), (200, 250), (400, 250))
+setup_slot_image = pygame.transform.scale(pygame.image.load("resources/setup_slot.png"), setup_slot_size)
+
+setup_slot_sword_topleft = (36, 36)
+
+setup_slot_made_min_distance = 600
+setup_slot_made_max_distance = 630
+setup_slot_made_min_angle = 0
+setup_slot_made_max_angle = 20
+
+setup_slot_reset_button_rect = pygame.Rect(0, 450, 600, 150)
+setup_slot_reset_button_image = pygame.transform.scale(pygame.image.load("resources/setup_reset_button.png"),
+                                                       setup_slot_reset_button_rect.size)
 
 made_resistance = 1000
 
@@ -188,6 +216,8 @@ upgrade_gage_life = 0
 
 upgrade_effect_type = 0
 upgrade_effect_delay = 0
+
+setup_slots = ["empty", "empty", "empty", "empty", "empty", "empty"]
 
 
 class MadeSword:
@@ -321,6 +351,21 @@ def pick_down(position, channel):
             upgrade_slot = swords[picked_sword]
             swords[picked_sword] = 0
             swords.remove(0)
+
+        elif channel == "Setup":
+            for index in range(len(setup_slot_toplefts)):
+                if pygame.Rect(setup_slot_toplefts[index], setup_slot_size).collidepoint(position):
+                    if setup_slots[index] != "empty":
+                        made_swords.append(MadeSword(setup_slots[index].rank,
+                                                     (setup_slot_toplefts[index][0] + setup_slot_size[0] / 2,
+                                                      setup_slot_toplefts[index][1] + setup_slot_size[1] / 2),
+                                                     random.randint(setup_slot_made_min_distance,
+                                                                    setup_slot_made_max_distance)
+                                                     , random.randint(setup_slot_made_min_angle,
+                                                                      setup_slot_made_max_angle)))
+                    setup_slots[index] = swords[picked_sword]
+                    swords[picked_sword] = 0
+                    swords.remove(0)
 
 
 def pick_draw(surface, mouse_pos):
@@ -522,3 +567,62 @@ def sell_button_click(position, coin):
             coin.plus(prices[upgrade_slot.rank])
             upgrade_slot = "empty"
 
+
+def setup_name_frame_draw(surface):
+    surface.blit(setup_name_frame_image, setup_name_frame_rect.topleft)
+    surface.blit(setup_name_frame_text, setup_name_frame_text_topleft)
+
+
+def setup_exit_button_draw(surface):
+    surface.blit(setup_exit_button_image, setup_exit_button_rect.topleft)
+    surface.blit(setup_exit_button_text, setup_exit_button_topleft)
+
+
+def setup_exit_button_click(position, channel):
+    if setup_exit_button_rect.collidepoint(position):
+        channel.shift("Combat")
+
+
+def setup_slots_draw(surface):
+    for index in range(len(setup_slot_toplefts)):
+        surface.blit(setup_slot_image, setup_slot_toplefts[index])
+        if setup_slots[index] != "empty":
+            surface.blit(upgrade_slot_sword_images[setup_slots[index].rank],
+                         (setup_slot_toplefts[index][0] + setup_slot_sword_topleft[0],
+                          setup_slot_toplefts[index][1] + setup_slot_sword_topleft[1]))
+
+
+def setup_slot_click(position):
+    for index in range(len(setup_slot_toplefts)):
+        if pygame.Rect(setup_slot_toplefts[index], setup_slot_size).collidepoint(position):
+            if setup_slots[index] != "empty":
+                made_swords.append(MadeSword(setup_slots[index].rank,
+                                             (setup_slot_toplefts[index][0] + setup_slot_size[0] / 2,
+                                              setup_slot_toplefts[index][1] + setup_slot_size[1] / 2),
+                                             random.randint(setup_slot_made_min_distance,
+                                                            setup_slot_made_max_distance)
+                                             , random.randint(setup_slot_made_min_angle,
+                                                              setup_slot_made_max_angle)))
+                setup_slots[index] = "empty"
+
+
+def setup_reset():
+    for index in range(len(setup_slots)):
+        if setup_slots[index] != "empty":
+            made_swords.append(MadeSword(setup_slots[index].rank,
+                                         (setup_slot_toplefts[index][0] + setup_slot_size[0] / 2,
+                                          setup_slot_toplefts[index][1] + setup_slot_size[1] / 2),
+                                         random.randint(setup_slot_made_min_distance,
+                                                        setup_slot_made_max_distance)
+                                         , random.randint(setup_slot_made_min_angle,
+                                                          setup_slot_made_max_angle)))
+            setup_slots[index] = "empty"
+
+
+def setup_reset_button_draw(surface):
+    surface.blit(setup_slot_reset_button_image, setup_slot_reset_button_rect.topleft)
+
+
+def setup_reset_button_click(position):
+    if setup_slot_reset_button_rect.collidepoint(position):
+        setup_reset()
