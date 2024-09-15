@@ -58,7 +58,7 @@ def main():
                 sys.exit()
 
             elif pygame_event.type == pygame.KEYUP:
-                if pygame_event.key == pygame.K_F1:
+                if pygame_event.key == pygame.K_f:
                     if fullScreen:
                         DISPLAY = pygame.display.set_mode((Display_width, Display_height))
                     else:
