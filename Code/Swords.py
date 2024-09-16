@@ -180,6 +180,11 @@ setup_slot_made_max_angle = 20
 setup_slot_reset_button_rect = pygame.Rect(0, 450, 600, 150)
 setup_slot_reset_button_image = pygame.transform.scale(pygame.image.load("resources/setup_reset_button.png"),
                                                        setup_slot_reset_button_rect.size)
+setup_slot_reset_button_enable_image = pygame.transform.scale(
+    pygame.image.load("resources/setup_reset_button_enable.png"), setup_slot_reset_button_rect.size)
+setup_slot_reset_button_text = Font.Font.render("setup reset", Font.tool.filled_list(0, 11), (36, 36))
+setup_slot_reset_button_text_rect = setup_slot_reset_button_text.get_rect()
+setup_slot_reset_button_text_rect.center = setup_slot_reset_button_rect.center
 
 made_resistance = 1000
 
@@ -620,7 +625,10 @@ def setup_reset():
 
 
 def setup_reset_button_draw(surface):
-    surface.blit(setup_slot_reset_button_image, setup_slot_reset_button_rect.topleft)
+    surface.blit(setup_slot_reset_button_enable_image, setup_slot_reset_button_rect.topleft)
+    if setup_slots.count("empty") == len(setup_slots):
+        surface.blit(setup_slot_reset_button_image, setup_slot_reset_button_rect.topleft)
+    surface.blit(setup_slot_reset_button_text, setup_slot_reset_button_text_rect.topleft)
 
 
 def setup_reset_button_click(position):
